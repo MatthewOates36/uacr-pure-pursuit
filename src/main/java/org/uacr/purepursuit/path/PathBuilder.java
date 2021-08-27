@@ -27,33 +27,33 @@ public class PathBuilder {
         return start(new Point(x, y));
     }
 
-    private final PathConstrains fDefaultConstraints;
-    private final List<Segment> fSegments;
+    private final PathConstrains defaultConstraints;
+    private final List<Segment> segments;
 
-    private SegmentBuildMode mCurrentSegmentBuildMode;
-    private Segment mCurrentSegment;
-    private List<Point> mCurrentPoints;
-    private Point mCurrentPoint;
+    private SegmentBuildMode currentSegmentBuildMode;
+    private Segment currentSegment;
+    private List<Point> currentPoints;
+    private Point currentPoint;
 
     private PathBuilder(Point point, PathConstrains constrains) {
-        fDefaultConstraints = constrains;
-        fSegments = new ArrayList<>();
+        defaultConstraints = constrains;
+        segments = new ArrayList<>();
 
-        mCurrentSegmentBuildMode = SegmentBuildMode.NONE;
-        mCurrentSegment = null;
-        mCurrentPoints = new ArrayList<>();
-        mCurrentPoint = point;
-        mCurrentPoints.add(mCurrentPoint);
+        currentSegmentBuildMode = SegmentBuildMode.NONE;
+        currentSegment = null;
+        currentPoints = new ArrayList<>();
+        currentPoint = point;
+        currentPoints.add(currentPoint);
     }
 
     public PathBuilder lineTo(Point point) {
-        if(mCurrentSegmentBuildMode != SegmentBuildMode.LINE) {
+        if(currentSegmentBuildMode != SegmentBuildMode.LINE) {
             createSegment();
         }
 
-        mCurrentSegmentBuildMode = SegmentBuildMode.LINE;
-        mCurrentPoint = point;
-        mCurrentPoints.add(mCurrentPoint);
+        currentSegmentBuildMode = SegmentBuildMode.LINE;
+        currentPoint = point;
+        currentPoints.add(currentPoint);
         return this;
     }
 
@@ -64,8 +64,8 @@ public class PathBuilder {
     public PathBuilder pointsTo(List<Point> points) {
         createSegment();
 
-        mCurrentSegmentBuildMode = SegmentBuildMode.POINT;
-        mCurrentPoint = points.get(points.size() - 1);
+        currentSegmentBuildMode = SegmentBuildMode.POINT;
+        currentPoint = points.get(points.size() - 1);
         return this;
     }
 
@@ -74,26 +74,26 @@ public class PathBuilder {
     }
 
     private void createSegment() {
-        if(mCurrentSegmentBuildMode == SegmentBuildMode.NONE || mCurrentPoints.size() < 1) {
+        if(currentSegmentBuildMode == SegmentBuildMode.NONE || currentPoints.size() < 1) {
             return;
         }
 
-        switch (mCurrentSegmentBuildMode) {
+        switch (currentSegmentBuildMode) {
             case LINE:
-                fSegments.add(new LineSegment(mCurrentPoints));
+                segments.add(new LineSegment(currentPoints));
                 break;
             case POINT:
-                fSegments.add(new PointSegment(mCurrentPoints));
+                segments.add(new PointSegment(currentPoints));
                 break;
         }
 
-        mCurrentPoints.clear();
+        currentPoints.clear();
     }
 
     public Path build() {
         createSegment();
 
-        return Path.createCompoundPath(fSegments, fDefaultConstraints);
+        return Path.createCompoundPath(segments, defaultConstraints);
     }
 
     private enum SegmentBuildMode {

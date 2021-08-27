@@ -11,42 +11,42 @@ import javax.annotation.Nullable;
 
 public abstract class WestCoastPurePursuitController extends PurePursuitController {
 
-    private static final Logger sLogger = LogManager.getLogger(WestCoastPurePursuitController.class);
+    private static final Logger logger = LogManager.getLogger(WestCoastPurePursuitController.class);
 
-    private final double fTrackWidth;
+    private final double trackWidth;
 
     @Nullable
-    private Path mCurrentPath;
-    private Pose2d mCurrentPose;
-    private Pose2d mFollowPose;
-    private FollowDirection mFollowDirection;
-    private boolean mIsFollowing;
-    private double mDeltaAngle;
+    private Path currentPath;
+    private Pose2d currentPose;
+    private Pose2d followPose;
+    private FollowDirection followDirection;
+    private boolean isFollowing;
+    private double deltaAngle;
 
     public WestCoastPurePursuitController(double trackWidth) {
-        fTrackWidth = trackWidth;
+        this.trackWidth = trackWidth;
 
-        mCurrentPath = null;
-        mCurrentPose = new Pose2d();
-        mFollowPose = new Pose2d();
-        mFollowDirection = FollowDirection.FORWARD;
-        mIsFollowing = false;
-        mDeltaAngle = 0;
+        currentPath = null;
+        currentPose = new Pose2d();
+        followPose = new Pose2d();
+        followDirection = FollowDirection.FORWARD;
+        isFollowing = false;
+        deltaAngle = 0;
     }
 
     public double getTrackWidth() {
-        return fTrackWidth;
+        return trackWidth;
     }
 
     public void followPath(Path path) {
-        mCurrentPath = path;
-        mCurrentPath.reset();
+        currentPath = path;
+        currentPath.reset();
         resetFollower();
-        mIsFollowing = true;
+        isFollowing = true;
     }
 
     public boolean isFollowing() {
-        return mIsFollowing;
+        return isFollowing;
     }
 
     public boolean isPathFinished() {
@@ -54,53 +54,53 @@ public abstract class WestCoastPurePursuitController extends PurePursuitControll
     }
 
     public FollowDirection getFollowDirection() {
-        return mFollowDirection;
+        return followDirection;
     }
 
     public void setFollowDirection(FollowDirection followDirection) {
-        mFollowDirection = followDirection;
+        followDirection = followDirection;
     }
 
     public void resetFollower() {
-        mCurrentPose = new Pose2d();
-        mFollowPose = new Pose2d();
+        currentPose = new Pose2d();
+        followPose = new Pose2d();
     }
 
     public void updateFollower() {
-        if (mCurrentPath == null || !mIsFollowing) {
+        if (currentPath == null || !isFollowing) {
             stopDrive();
 
             return;
         }
 
-        mCurrentPose = getCurrentPose();
+        currentPose = getCurrentPose();
 
-        mFollowPose = mCurrentPose.clone();
+        followPose = currentPose.clone();
 
-        if (mFollowDirection == FollowDirection.REVERSE) {
-            mFollowPose = new Pose2d(mFollowPose.getX(), mFollowPose.getY(), ((mFollowPose.getHeading() + 360) % 360) - 180);
+        if (followDirection == FollowDirection.REVERSE) {
+            followPose = new Pose2d(followPose.getX(), followPose.getY(), ((followPose.getHeading() + 360) % 360) - 180);
         }
 
         // Uses the path object to calculate curvature and velocity values
-        double velocity = mCurrentPath.getVelocity(mFollowPose);
-        Point lookaheadPoint = mCurrentPath.getLookaheadPoint(mFollowPose);
+        double velocity = currentPath.getVelocity(followPose);
+        Point lookaheadPoint = currentPath.getLookaheadPoint(followPose);
 
-        sLogger.info("Length: {} - Current Pose: {} - Lookahead: {} - Velocity: {}", mCurrentPath.length(), mFollowPose, lookaheadPoint, velocity);
+        logger.info("Length: {} - Current Pose: {} - Lookahead: {} - Velocity: {}", currentPath.length(), followPose, lookaheadPoint, velocity);
 
-        updateDriveVelocities(velocity, getCurvature(mCurrentPose, lookaheadPoint));
+        updateDriveVelocities(velocity, getCurvature(currentPose, lookaheadPoint));
 
-        if(mCurrentPath.isDone(mFollowPose)) {
-            mIsFollowing = false;
+        if(currentPath.isDone(followPose)) {
+            isFollowing = false;
         }
     }
 
     protected void updateDriveVelocities(double velocity, double curvature) {
-        if (mFollowDirection == FollowDirection.REVERSE) {
-            setDriveVelocities(-(velocity * ((1.5 - curvature * fTrackWidth) / 1.5)),
-                    -(velocity * ((1.5 + curvature * fTrackWidth) / 1.5)));
+        if (followDirection == FollowDirection.REVERSE) {
+            setDriveVelocities(-(velocity * ((1.5 - curvature * trackWidth) / 1.5)),
+                    -(velocity * ((1.5 + curvature * trackWidth) / 1.5)));
         } else {
-            setDriveVelocities(velocity * ((1.5 + curvature * fTrackWidth) / 1.5),
-                    velocity * ((1.5 - curvature * fTrackWidth) / 1.5));
+            setDriveVelocities(velocity * ((1.5 + curvature * trackWidth) / 1.5),
+                    velocity * ((1.5 - curvature * trackWidth) / 1.5));
         }
     }
 
@@ -109,11 +109,11 @@ public abstract class WestCoastPurePursuitController extends PurePursuitControll
 
         double angle = Math.toDegrees(Math.atan2(delta.getY(), Math.abs(delta.getX()) > 0.3 ? delta.getX() : 0.3 * Math.signum(delta.getX())));
 
-        mDeltaAngle = currentPosition.getHeading() - angle;
+        deltaAngle = currentPosition.getHeading() - angle;
 
-        if (Math.abs(mDeltaAngle) > 180) mDeltaAngle = -Math.signum(mDeltaAngle) * (360 - Math.abs(mDeltaAngle));
+        if (Math.abs(deltaAngle) > 180) deltaAngle = -Math.signum(deltaAngle) * (360 - Math.abs(deltaAngle));
 
-        double curvature = (Math.abs(mDeltaAngle) > 90 ? Math.signum(mDeltaAngle) : Math.sin(Math.toRadians(mDeltaAngle))) / (delta.magnitude() / 2);
+        double curvature = (Math.abs(deltaAngle) > 90 ? Math.signum(deltaAngle) : Math.sin(Math.toRadians(deltaAngle))) / (delta.magnitude() / 2);
 
         if (Double.isInfinite(curvature) || Double.isNaN(curvature)) return 0.0;
 

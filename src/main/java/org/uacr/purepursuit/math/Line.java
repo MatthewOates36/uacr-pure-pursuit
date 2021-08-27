@@ -4,14 +4,14 @@ import org.uacr.purepursuit.PathUtil;
 
 public class Line {
 
-    private final Point fInitial;
-    private final Point fTerminal;
-    private final Vector fDelta;
+    private final Point initial;
+    private final Point terminal;
+    private final Vector delta;
 
     public Line(Point initial, Point terminal) {
-        fInitial = initial;
-        fTerminal = terminal;
-        fDelta = new Vector(fTerminal.subtract(fInitial));
+        this.initial = initial;
+        this.terminal = terminal;
+        delta = new Vector(terminal.subtract(initial));
     }
 
     public Line(Point initial, Vector terminalFromInitial) {
@@ -19,15 +19,15 @@ public class Line {
     }
 
     public Point initial() {
-        return fInitial;
+        return initial;
     }
 
     public Point terminal() {
-        return fTerminal;
+        return terminal;
     }
 
     public Vector delta() {
-        return fDelta;
+        return delta;
     }
 
     public double slope() {

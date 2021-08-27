@@ -7,18 +7,18 @@ import java.util.Map;
 
 public abstract class Segment {
 
-    private double mLookaheadDistance;
+    private double lookaheadDistance;
 
     public Segment() {
-        mLookaheadDistance = 15;
+        lookaheadDistance = 15;
     }
 
     public void setLookaheadDistance(double lookaheadDistance) {
-        mLookaheadDistance = lookaheadDistance;
+        lookaheadDistance = lookaheadDistance;
     }
 
     public double getLookaheadDistance() {
-        return mLookaheadDistance;
+        return lookaheadDistance;
     }
 
     /**
