@@ -29,20 +29,20 @@ public class Path {
         return new Path(segments);
     }
 
-    private final PathConstrains fConstraints;
+    private final PathConstrains constraints;
 
-    private final List<Segment> fSegments;
-    private final VelocityProfile fProfile;
+    private final List<Segment> segments;
+    private final VelocityProfile profile;
 
-    private int mSegmentIndex;
+    private int segmentIndex;
 
     private Path(List<Segment> segments, PathConstrains constrains) {
-        fConstraints = constrains;
+        constraints = constrains;
 
-        fSegments = segments;
-        mSegmentIndex = 0;
+        this.segments = segments;
+        segmentIndex = 0;
 
-        fProfile = new TrapezoidVelocityProfile(fConstraints, length(), getSpeedReductions());
+        profile = new TrapezoidVelocityProfile(constraints, length(), getSpeedReductions());
     }
 
     private Path(List<Segment> segments) {
@@ -54,7 +54,7 @@ public class Path {
     }
 
     public double length() {
-        return fSegments.stream().mapToDouble(Segment::length).sum();
+        return segments.stream().mapToDouble(Segment::length).sum();
     }
 
     public Point getLookaheadPoint(Pose2d currentPosition) {
@@ -62,7 +62,7 @@ public class Path {
     }
 
     public double getVelocity(Pose2d currentPosition) {
-        return fProfile.getVelocity(updateCurrentSegment(currentPosition).getDistance(currentPosition));
+        return profile.getVelocity(updateCurrentSegment(currentPosition).getDistance(currentPosition));
     }
 
     public double getHeading(Pose2d currentPosition) {
@@ -70,14 +70,14 @@ public class Path {
     }
 
     private Segment updateCurrentSegment(Pose2d currentPosition) {
-        Segment currentSegment = fSegments.get(mSegmentIndex);
+        Segment currentSegment = segments.get(segmentIndex);
 
-        if (mSegmentIndex != fSegments.size() - 1 && currentSegment.isDone(currentPosition)) {
-            mSegmentIndex++;
-            currentSegment = fSegments.get(mSegmentIndex);
+        if (segmentIndex != segments.size() - 1 && currentSegment.isDone(currentPosition)) {
+            segmentIndex++;
+            currentSegment = segments.get(segmentIndex);
         }
 
-        currentSegment.setLookaheadDistance(fConstraints.lookaheadDistance);
+        currentSegment.setLookaheadDistance(constraints.lookaheadDistance);
         return currentSegment;
     }
 
@@ -90,8 +90,8 @@ public class Path {
 
         double distance = 0.0;
 
-        for(int s = 0; s < fSegments.size(); s++) {
-            Segment segment = fSegments.get(s);
+        for(int s = 0; s < segments.size(); s++) {
+            Segment segment = segments.get(s);
 
             for(Map.Entry<Double, Double> segmentSpeedReduction : segment.getSpeedReductions().entrySet()) {
                 speedReductions.put(segmentSpeedReduction.getKey() + distance, segmentSpeedReduction.getValue());
@@ -99,8 +99,8 @@ public class Path {
 
             distance += segment.length();
 
-            if(s < fSegments.size() - 1) {
-                double speedReduction = Math.abs(PathUtil.angleWrap(fSegments.get(s + 1).getInitialAngle() - segment.getFinalAngle())) / 90;
+            if(s < segments.size() - 1) {
+                double speedReduction = Math.abs(PathUtil.angleWrap(segments.get(s + 1).getInitialAngle() - segment.getFinalAngle())) / 90;
 
                 if (0 < speedReduction && speedReduction <= 1) {
                     speedReductions.put(distance, speedReduction);
@@ -116,6 +116,6 @@ public class Path {
     }
 
     public String toString() {
-        return fSegments.toString();
+        return segments.toString();
     }
 }

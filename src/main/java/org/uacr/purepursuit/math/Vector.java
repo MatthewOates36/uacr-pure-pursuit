@@ -11,37 +11,37 @@ import java.util.List;
 
 public class Vector extends Point {
 
-    private double fMagnitude;
-    private double fAngle;
+    private double magnitude;
+    private double angle;
 
     public Vector() {
         super();
-        fMagnitude = 0;
-        fAngle = 0;
+        magnitude = 0;
+        angle = 0;
     }
 
     public Vector(double magnitude, double angle) {
         this(new Point(magnitude * Math.cos(Math.toRadians(angle)), magnitude * Math.sin(Math.toRadians(angle))));
-        fMagnitude = magnitude;
-        fAngle = angle;
+        magnitude = magnitude;
+        angle = angle;
     }
 
     public Vector(List<Double> coordinates) {
         super(coordinates);
-        fMagnitude = Math.sqrt(Math.pow(fX, 2) + Math.pow(fY, 2));
-        fAngle = Math.toDegrees(Math.atan2(fY, fX));
+        magnitude = Math.sqrt(Math.pow(fX, 2) + Math.pow(fY, 2));
+        angle = Math.toDegrees(Math.atan2(fY, fX));
     }
 
     public Vector(Point point) {
         super(point.getX(), point.getY());
-        fMagnitude = Math.sqrt(Math.pow(fX, 2) + Math.pow(fY, 2));
-        fAngle = Math.toDegrees(Math.atan2(fY, fX));
+        magnitude = Math.sqrt(Math.pow(fX, 2) + Math.pow(fY, 2));
+        angle = Math.toDegrees(Math.atan2(fY, fX));
     }
 
     public Vector(double x1, double y1, double x2, double y2) {
         this(new Point(x2 - x1, y2 - y1));
-        fMagnitude = Math.sqrt(Math.pow(fX, 2) + Math.pow(fY, 2));
-        fAngle = Math.toDegrees(Math.atan2(fY, fX));
+        magnitude = Math.sqrt(Math.pow(fX, 2) + Math.pow(fY, 2));
+        angle = Math.toDegrees(Math.atan2(fY, fX));
     }
 
     public Vector(Point point1, Point point2) {
@@ -49,11 +49,11 @@ public class Vector extends Point {
     }
 
     public double magnitude() {
-        return fMagnitude;
+        return magnitude;
     }
 
     public double angle() {
-        return fAngle;
+        return angle;
     }
 
     public Vector normalize() {

@@ -10,20 +10,20 @@ import java.util.*;
 
 public class LineSegment extends Segment {
 
-    private final List<Line> fLines;
+    private final List<Line> lines;
 
-    private int mCurrentLineIndex;
-    private boolean mIsDone;
+    private int currentLineIndex;
+    private boolean isDone;
 
     public LineSegment(List<Point> points) {
-        fLines = new ArrayList<>();
+        lines = new ArrayList<>();
 
         for (int p = 0; p < points.size() - 1; p++) {
-            fLines.add(new Line(points.get(p), points.get(p + 1)));
+            lines.add(new Line(points.get(p), points.get(p + 1)));
         }
 
-        mCurrentLineIndex = 0;
-        mIsDone = false;
+        currentLineIndex = 0;
+        isDone = false;
     }
 
     public LineSegment(Point... points) {
@@ -31,25 +31,25 @@ public class LineSegment extends Segment {
     }
 
     public Point getLookaheadPoint(Pose2d currentPose) {
-        if (fLines.size() < 1 || mCurrentLineIndex > fLines.size()) {
+        if (lines.size() < 1 || currentLineIndex > lines.size()) {
             return null;
         }
 
         Point lookaheadPoint = null;
 
-        while (mCurrentLineIndex < fLines.size()) {
-            lookaheadPoint = getCorrectIntersection(currentPose, fLines.get(mCurrentLineIndex));
+        while (currentLineIndex < lines.size()) {
+            lookaheadPoint = getCorrectIntersection(currentPose, lines.get(currentLineIndex));
             if (lookaheadPoint != null) {
                 break;
             }
-            if (mCurrentLineIndex >= fLines.size() - 1) {
+            if (currentLineIndex >= lines.size() - 1) {
                 break;
             }
-            mCurrentLineIndex++;
+            currentLineIndex++;
         }
 
         if (lookaheadPoint == null) {
-            lookaheadPoint = fLines.get(fLines.size() - 1).terminal();
+            lookaheadPoint = lines.get(lines.size() - 1).terminal();
         }
 
         return lookaheadPoint;
@@ -59,11 +59,11 @@ public class LineSegment extends Segment {
     public double getDistance(Pose2d currentPose) {
         double distance = 0.0;
 
-        for (int l = mCurrentLineIndex - 1; l < mCurrentLineIndex; l++) {
-            distance += fLines.get(mCurrentLineIndex).length();
+        for (int l = currentLineIndex - 1; l < currentLineIndex; l++) {
+            distance += lines.get(currentLineIndex).length();
         }
 
-        return distance + fLines.get(mCurrentLineIndex).distanceFromInitial(fLines.get(mCurrentLineIndex).closestPointInSection(currentPose));
+        return distance + lines.get(currentLineIndex).distanceFromInitial(lines.get(currentLineIndex).closestPointInSection(currentPose));
     }
 
     private Point getCorrectIntersection(Pose2d currentPose, Line line) {
@@ -98,22 +98,22 @@ public class LineSegment extends Segment {
     }
 
     public double length() {
-        return fLines.stream().mapToDouble(Line::length).sum();
+        return lines.stream().mapToDouble(Line::length).sum();
     }
 
     @Override
     public boolean isDone(Pose2d currentPose) {
-        return mIsDone;
+        return isDone;
     }
 
     @Override
     public double getInitialAngle() {
-        return fLines.get(0).delta().angle();
+        return lines.get(0).delta().angle();
     }
 
     @Override
     public double getFinalAngle() {
-        return fLines.get(fLines.size() - 1).delta().angle();
+        return lines.get(lines.size() - 1).delta().angle();
     }
 
     @Override
@@ -122,12 +122,12 @@ public class LineSegment extends Segment {
 
         double distance = 0.0;
 
-        for (int p = 0; p < fLines.size() - 1; p++) {
-            distance += fLines.get(p).length();
+        for (int p = 0; p < lines.size() - 1; p++) {
+            distance += lines.get(p).length();
 
             // Calculate the amount of speed reduction
             // A 90 degree angle or greater will cause a full speed reduction to the minimum path speed
-            double speedReduction = Math.abs(PathUtil.angleWrap(fLines.get(p + 1).delta().angle() - fLines.get(p).delta().angle())) / 90;
+            double speedReduction = Math.abs(PathUtil.angleWrap(lines.get(p + 1).delta().angle() - lines.get(p).delta().angle())) / 90;
 
             // If there is a speed reduction at the current point put it in the map
             if (0 < speedReduction) {
@@ -139,6 +139,6 @@ public class LineSegment extends Segment {
     }
 
     public String toString() {
-        return fLines.toString();
+        return lines.toString();
     }
 }

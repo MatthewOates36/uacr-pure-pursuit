@@ -5,12 +5,12 @@ import java.util.List;
 
 public class Circle {
 
-    private final Point fCenter;
-    private final double fRadius;
+    private final Point center;
+    private final double radius;
 
     public Circle(Point center, double radius) {
-        fCenter = center;
-        fRadius = radius;
+        this.center = center;
+        this.radius = radius;
     }
 
     public Circle(double x, double y, double radius) {
@@ -18,15 +18,15 @@ public class Circle {
     }
 
     public Point getCenter() {
-        return fCenter;
+        return center;
     }
 
     public double getRadius() {
-        return fRadius;
+        return radius;
     }
 
     public double getDiameter() {
-        return fRadius * 2;
+        return radius * 2;
     }
 
     public double getCircumference() {
@@ -43,7 +43,7 @@ public class Circle {
     public List<Point> getIntersections(Line line) {
         List<Point> intersections = new ArrayList<>();
 
-        Vector lineShift = new Vector(fCenter).invert();
+        Vector lineShift = new Vector(center).invert();
 
         Line shiftedLine = line.shift(lineShift);
 

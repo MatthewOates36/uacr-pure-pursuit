@@ -9,12 +9,12 @@ package org.uacr.purepursuit.math;
 
 public class Pose2d extends Point {
 
-    private final double fHeading;
+    private final double heading;
 
     public Pose2d(double x, double y, double heading) {
         super(x, y);
 
-        fHeading = heading;
+        this.heading = heading;
     }
 
     public Pose2d(Point point, double heading) {
@@ -26,10 +26,10 @@ public class Pose2d extends Point {
     }
 
     public double getHeading() {
-        return fHeading;
+        return heading;
     }
 
     public Pose2d clone() {
-        return new Pose2d(fX, fY, fHeading);
+        return new Pose2d(fX, fY, heading);
     }
 }

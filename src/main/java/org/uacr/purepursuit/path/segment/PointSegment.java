@@ -16,29 +16,29 @@ public class PointSegment extends Segment {
     /**
      * Distance between each point (inches)
      */
-    private double mPointSpacing = 1;
+    private double pointSpacing = 1;
 
     /**
      * The amount of smoothing to be done on the path (larger number = more smoothing)
      */
-    private double mPathSmoothing = 0.5;
+    private double pathSmoothing = 0.5;
 
     /**
      * Waypoints along path specified by behavior
      */
-    private List<Point> mPoints;
+    private List<Point> points;
 
     /**
-     * All the points along the path, created from the waypoints (fPoints)
+     * All the points along the path, created from the waypoints (points)
      */
     @Nullable
-    private List<PathPoint> mPath;
+    private List<PathPoint> path;
 
     /**
      * Pass in an ArrayList of waypoints
      */
     public PointSegment(List<Point> points) {
-        mPoints = points;
+        points = points;
     }
 
     /**
@@ -53,23 +53,23 @@ public class PointSegment extends Segment {
      */
 
     public double getPointSpacing() {
-        return mPointSpacing;
+        return pointSpacing;
     }
 
     public void setPointSpacing(double pointSpacing) {
-        mPointSpacing = pointSpacing;
+        pointSpacing = pointSpacing;
     }
 
     public double getPathSmoothing() {
-        return mPathSmoothing;
+        return pathSmoothing;
     }
 
     public void setPathSmoothing(double pathSmoothing) {
-        mPathSmoothing = pathSmoothing;
+        pathSmoothing = pathSmoothing;
     }
 
     /**
-     * Returns a single PathPoint from fPath
+     * Returns a single PathPoint from path
      *
      * @param index the index of the PathPoint
      * @return a PathPoint
@@ -79,56 +79,56 @@ public class PointSegment extends Segment {
     }
 
     /**
-     * Returns all points in path (fPath).
+     * Returns all points in path (path).
      *
      * @return a PathPoint ArrayList
      */
     public List<PathPoint> getPoints() {
-        if (mPath != null) {
-            return new ArrayList<>(mPath);
+        if (path != null) {
+            return new ArrayList<>(path);
         }
         build();
         return getPoints();
     }
 
     /**
-     * Returns a single PathPoint from fPath
+     * Returns a single PathPoint from path
      *
      * @param point the index of the PathPoint
      * @return a PathPoint
      */
     private PathPoint getPathPoint(int point) {
-        if (mPath != null) {
-            return mPath.get(point);
+        if (path != null) {
+            return path.get(point);
         }
         build();
         return getPathPoint(point);
     }
 
     /**
-     * Returns all points in path (fPath).
+     * Returns all points in path (path).
      *
      * @return a PathPoint ArrayList
      */
     private List<PathPoint> getPath() {
-        if (mPath != null) {
-            return mPath;
+        if (path != null) {
+            return path;
         }
         build();
         return getPath();
     }
 
     /**
-     * Turns all the waypoints (fPoints) into a path (fPath).
+     * Turns all the waypoints (points) into a path (path).
      */
     public void build() {
 
-        if (mPath != null) {
+        if (path != null) {
             return;
         }
 
-        if (mPoints.size() == 0) {
-            mPath = new ArrayList<>();
+        if (points.size() == 0) {
+            path = new ArrayList<>();
             return;
         }
 
@@ -138,26 +138,26 @@ public class PointSegment extends Segment {
     }
 
     /**
-     * Fills the spaces between waypoints (fPoints) with a point fPointSpacing inches.
+     * Fills the spaces between waypoints (points) with a point pointSpacing inches.
      */
     private void fill() {
         ArrayList<Point> newPoints = new ArrayList<>();
 
-        for (int s = 1; s < mPoints.size(); s++) {
-            Vector vector = new Vector(mPoints.get(s - 1), mPoints.get(s));
+        for (int s = 1; s < points.size(); s++) {
+            Vector vector = new Vector(points.get(s - 1), points.get(s));
 
-            int numPointsFit = (int) Math.ceil(vector.magnitude() / mPointSpacing);
+            int numPointsFit = (int) Math.ceil(vector.magnitude() / pointSpacing);
 
-            vector = vector.normalize().scale(mPointSpacing);
+            vector = vector.normalize().scale(pointSpacing);
 
             for (int i = 0; i < numPointsFit; i++) {
-                newPoints.add(mPoints.get(s - 1).add(vector.scale(i)));
+                newPoints.add(points.get(s - 1).add(vector.scale(i)));
             }
         }
 
-        newPoints.add(mPoints.get(mPoints.size() - 1));
+        newPoints.add(points.get(points.size() - 1));
 
-        mPoints = newPoints;
+        points = newPoints;
     }
 
     /**
@@ -170,18 +170,18 @@ public class PointSegment extends Segment {
             change = 0;
             changedPoints = 0;
 
-            List<Point> newPoints = new ArrayList<>(mPoints);
+            List<Point> newPoints = new ArrayList<>(points);
 
-            for (int i = 1; i < mPoints.size() - 1; i++) {
-                Point point = mPoints.get(i);
+            for (int i = 1; i < points.size() - 1; i++) {
+                Point point = points.get(i);
 
-                Vector middle = new Vector(mPoints.get(i + 1).subtract(mPoints.get(i - 1)));
+                Vector middle = new Vector(points.get(i + 1).subtract(points.get(i - 1)));
 
-                middle = new Vector(mPoints.get(i - 1).add(middle.normalize().scale(middle.magnitude() / 2)));
+                middle = new Vector(points.get(i - 1).add(middle.normalize().scale(middle.magnitude() / 2)));
 
                 Vector delta = new Vector(middle.subtract(point));
 
-                Point newPoint = point.add(delta.normalize().scale(delta.magnitude() * mPathSmoothing));
+                Point newPoint = point.add(delta.normalize().scale(delta.magnitude() * pathSmoothing));
 
                 if (!Double.isNaN(newPoint.getX()) && !Double.isNaN(newPoint.getY())) {
                     newPoints.set(i, newPoint);
@@ -190,7 +190,7 @@ public class PointSegment extends Segment {
                 }
             }
 
-            mPoints = newPoints;
+            points = newPoints;
         }
     }
 

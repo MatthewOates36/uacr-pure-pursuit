@@ -96,30 +96,30 @@ public class VectorList extends ArrayList<Vector> {
         SCALE_LARGEST_UP_OR_DOWN(true, true, true),
         SCALE_SMALLEST_UP_OR_DOWN(false, true, true);
 
-        private final boolean fLargest;
-        private final boolean fUp;
-        private final boolean fDown;
+        private final boolean largest;
+        private final boolean up;
+        private final boolean down;
 
         private AutoScaleMode(boolean largest, boolean up, boolean down) {
-            fLargest = largest;
-            fUp = up;
-            fDown = down;
+            this.largest = largest;
+            this.up = up;
+            this.down = down;
         }
 
         public boolean largest() {
-            return fLargest;
+            return largest;
         }
 
         public boolean smallest() {
-            return !fLargest;
+            return !largest;
         }
 
         public boolean up() {
-            return fUp;
+            return up;
         }
 
         public boolean down() {
-            return fDown;
+            return down;
         }
     }
 }
