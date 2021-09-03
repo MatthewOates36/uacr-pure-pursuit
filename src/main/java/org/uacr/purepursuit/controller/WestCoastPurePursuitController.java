@@ -26,12 +26,12 @@ public abstract class WestCoastPurePursuitController extends PurePursuitControll
     public WestCoastPurePursuitController(double trackWidth) {
         this.trackWidth = trackWidth;
 
-        currentPath = null;
-        currentPose = new Pose2d();
-        followPose = new Pose2d();
-        followDirection = FollowDirection.FORWARD;
-        isFollowing = false;
-        deltaAngle = 0;
+        this.currentPath = null;
+        this.currentPose = new Pose2d();
+        this.followPose = new Pose2d();
+        this.followDirection = FollowDirection.FORWARD;
+        this.isFollowing = false;
+        this.deltaAngle = 0;
     }
 
     public double getTrackWidth() {
@@ -58,7 +58,7 @@ public abstract class WestCoastPurePursuitController extends PurePursuitControll
     }
 
     public void setFollowDirection(FollowDirection followDirection) {
-        followDirection = followDirection;
+        this.followDirection = followDirection;
     }
 
     public void resetFollower() {
